@@ -18,7 +18,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.bridge.queue.ReactQueueConfigurationSpec;
-import com.facebook.react.devsupport.interfaces.DevSupportManager;
+import com.facebook.react.devsupport.DevSupportManager;
 import com.facebook.soloader.SoLoader;
 
 import java.util.ArrayList;
@@ -29,7 +29,6 @@ public class ReactContextBuilder {
     private Context parentContext;
     private JSBundleLoader jsBundleLoader;
     private DevSupportManager devSupportManager;
-    private ReactInstanceManager instanceManager;
     private ArrayList<ReactPackage> reactPackages;
 
     public ReactContextBuilder(Context context) {
@@ -47,10 +46,6 @@ public class ReactContextBuilder {
         return this;
     }
 
-    public ReactContextBuilder setReactInstanceManager(ReactInstanceManager manager) {
-        this.instanceManager = manager;
-        return this;
-    }
 
     public ReactContextBuilder setReactPackages(ArrayList<ReactPackage> reactPackages) {
         this.reactPackages = reactPackages;
@@ -67,7 +62,7 @@ public class ReactContextBuilder {
         }
 
         // load native modules
-        NativeModuleRegistryBuilder nativeRegistryBuilder = new NativeModuleRegistryBuilder(reactContext, this.instanceManager, false);
+        NativeModuleRegistryBuilder nativeRegistryBuilder = new NativeModuleRegistryBuilder(reactContext, false);
         addNativeModules(reactContext, nativeRegistryBuilder);
 
         // load js modules

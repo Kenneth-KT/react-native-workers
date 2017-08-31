@@ -13,7 +13,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.devsupport.interfaces.DevSupportManager;
+import com.facebook.react.devsupport.DevSupportManager;
 
 import java.io.File;
 import java.io.IOException;
@@ -66,7 +66,6 @@ public class WorkerModule extends ReactContextBaseJavaModule implements Lifecycl
             ReactContextBuilder workerContextBuilder = new ReactContextBuilder(getReactApplicationContext())
                     .setJSBundleLoader(bundleLoader)
                     .setDevSupportManager(getDevSupportManager())
-                    .setReactInstanceManager(getReactInstanceManager())
                     .setReactPackages(workerPackages);
 
             JSWorker worker = new JSWorker(jsFileSlug);
