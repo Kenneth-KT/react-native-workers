@@ -15,6 +15,7 @@ import com.facebook.react.modules.debug.SourceCodeModule;
 import com.facebook.react.modules.intent.IntentModule;
 import com.facebook.react.modules.location.LocationModule;
 import com.facebook.react.modules.netinfo.NetInfoModule;
+import com.facebook.react.modules.appstate.AppStateModule;
 import com.facebook.react.modules.network.NetworkingModule;
 import com.facebook.react.modules.storage.AsyncStorageModule;
 import com.facebook.react.modules.systeminfo.AndroidInfoModule;
