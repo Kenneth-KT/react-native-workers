@@ -58,27 +58,33 @@ public class WorkerModule extends ReactContextBaseJavaModule implements Lifecycl
         JSBundleLoader bundleLoader = getDevSupportManager().getDevSupportEnabled()
                 ? createDevBundleLoader(jsFileName, jsFileSlug)
                 : createReleaseBundleLoader(jsFileName, jsFileSlug);
-
+        Log.d(TAG, "Finished bundling");
         try {
+            Log.d(TAG, "Entered try, line 63");
             ArrayList<ReactPackage> workerPackages = new ArrayList<ReactPackage>(Arrays.asList(additionalWorkerPackages));
             workerPackages.add(0, new BaseReactPackage(getReactInstanceManager()));
-
+            Log.d(TAG, "line 66");            
             ReactContextBuilder workerContextBuilder = new ReactContextBuilder(getReactApplicationContext())
                     .setJSBundleLoader(bundleLoader)
                     .setDevSupportManager(getDevSupportManager())
                     .setReactPackages(workerPackages);
-
+            Log.d(TAG, "line 71");
             JSWorker worker = new JSWorker(jsFileSlug);
+            Log.d(TAG, "line 72");
             worker.runFromContext(
                     getReactApplicationContext(),
                     workerContextBuilder
             );
+            Log.d(TAG, "line 76");
             workers.put(worker.getWorkerId(), worker);
+            Log.d(TAG, "line 80");
             promise.resolve(worker.getWorkerId());
         } catch (Exception e) {
+            Log.d(TAG, "Error line 80");
             promise.reject(e);
             getDevSupportManager().handleException(e);
         }
+        Log.d(TAG, "line 87");
     }
 
     @ReactMethod
@@ -170,8 +176,9 @@ public class WorkerModule extends ReactContextBaseJavaModule implements Lifecycl
         String bundleOut = getReactApplicationContext().getFilesDir().getAbsolutePath() + "/" + jsFileSlug;
 
         Log.d(TAG, "createDevBundleLoader - download web worker to - " + bundleOut);
+        Log.d(TAG, "starting download");
         downloadScriptToFileSync(bundleUrl, bundleOut);
-
+        Log.d(TAG,"Finishing download");
         return JSBundleLoader.createCachedBundleFromNetworkLoader(bundleUrl, bundleOut);
     }
 

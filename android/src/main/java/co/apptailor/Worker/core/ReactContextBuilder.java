@@ -1,6 +1,9 @@
 package co.apptailor.Worker.core;
 
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.ApplicationInfo;
 import android.content.Context;
+import android.util.Log;
 
 import com.facebook.react.NativeModuleRegistryBuilder;
 import com.facebook.react.ReactPackage;
@@ -30,6 +33,7 @@ public class ReactContextBuilder {
     private JSBundleLoader jsBundleLoader;
     private DevSupportManager devSupportManager;
     private ArrayList<ReactPackage> reactPackages;
+    private ApplicationInfo applicationInfo;
 
     public ReactContextBuilder(Context context) {
         this.parentContext = context;
@@ -51,24 +55,35 @@ public class ReactContextBuilder {
         this.reactPackages = reactPackages;
         return this;
     }
-
+ 
+    public ReactContextBuilder setApplicationInfo(ApplicationInfo applicationInfo) {
+        try {
+            this.applicationInfo = this.parentContext.getPackageManager().getApplicationInfo(this.parentContext.getPackageName(), 0);
+            return this;
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return this;
+ } 
     public ReactApplicationContext build() throws Exception {
         JavaScriptExecutor jsExecutor = new JSCJavaScriptExecutor.Factory(new WritableNativeMap()).create();
 
         // fresh new react context
         final ReactApplicationContext reactContext = new ReactApplicationContext(parentContext);
+        Log.d("RCB", "line 60");
         if (devSupportManager != null) {
             reactContext.setNativeModuleCallExceptionHandler(devSupportManager);
         }
-
+        Log.d("RCB", "line 64");
         // load native modules
         NativeModuleRegistryBuilder nativeRegistryBuilder = new NativeModuleRegistryBuilder(reactContext, false);
         addNativeModules(reactContext, nativeRegistryBuilder);
-
+        Log.d("RCB", "line 68");
         // load js modules
         JavaScriptModuleRegistry.Builder jsModulesBuilder = new JavaScriptModuleRegistry.Builder();
+        Log.d("RCB", "line 71");
         addJSModules(jsModulesBuilder);
-
+        Log.d("RCB", "line 73");
         CatalystInstanceImpl.Builder catalystInstanceBuilder = new CatalystInstanceImpl.Builder()
                 .setReactQueueConfigurationSpec(ReactQueueConfigurationSpec.createDefault())
                 .setJSExecutor(jsExecutor)
@@ -78,36 +93,50 @@ public class ReactContextBuilder {
                 .setNativeModuleCallExceptionHandler(devSupportManager != null
                         ? devSupportManager
                         : createNativeModuleExceptionHandler()
-                );
+                )
+                .setApplicationInfo(applicationInfo);
 
-
+        Log.d("RCB", "line 86");
         final CatalystInstance catalystInstance;
+        Log.d("RCB", "line 89");
+        if (jsBundleLoader != null) {
+            Log.d("RCB", "jsBundleLoader not null");
+        }
+        if (jsExecutor != null) {
+            Log.d("RCB", "jsExecutor not null");
+        }
+        if (applicationInfo != null) {
+            Log.d("RCB", "appInfo not null");
+        }
         catalystInstance = catalystInstanceBuilder.build();
-
+        Log.d("RCB", "line 90");
         catalystInstance.getReactQueueConfiguration().getJSQueueThread().callOnQueue(
                 new Callable<Object>() {
                     @Override
                     public Object call() throws Exception {
                         try {
+                            Log.d("RCB", "line 96");
                             reactContext.initializeWithInstance(catalystInstance);
                             catalystInstance.runJSBundle();
                         } catch (Exception e) {
+                            Log.d("RCB", "line 100");
                             e.printStackTrace();
                             devSupportManager.handleException(e);
                         }
-
                         return null;
                     }
                 }
         ).get();
-
+        Log.d("RCB", "line 107");
         catalystInstance.getReactQueueConfiguration().getUIQueueThread().callOnQueue(new Callable<Object>() {
             @Override
             public Object call() throws Exception {
                 try {
+                    Log.d("RCB", "line 113");
                     catalystInstance.initialize();
                     reactContext.onHostResume(null);
                 } catch (Exception e) {
+                    Log.d("RCB", "line 117");
                     e.printStackTrace();
                     devSupportManager.handleException(e);
                 }
