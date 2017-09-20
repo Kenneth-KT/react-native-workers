@@ -1,5 +1,7 @@
 package co.apptailor.Worker;
 
+import android.util.Log;
+
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
@@ -29,13 +31,16 @@ public class JSWorker {
 
     public void runFromContext(ReactApplicationContext context, ReactContextBuilder reactContextBuilder) throws Exception {
         if (reactContext != null) {
+            Log.d("JSWorker File", "line 32");
             return;
         }
-
+        Log.d("JSWorker File", "line 35");
         reactContext = reactContextBuilder.build();
-
+        Log.d("JSWorker File", "line 37");
         WorkerSelfModule workerSelfModule = reactContext.getNativeModule(WorkerSelfModule.class);
+        Log.d("JSWorker File", "line 39");
         workerSelfModule.initialize(id, context);
+        Log.d("JSWorker File", "line 41");
     }
 
     public void postMessage(String message) {

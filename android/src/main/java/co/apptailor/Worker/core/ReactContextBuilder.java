@@ -18,6 +18,7 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.WritableNativeMap;
 import com.facebook.react.bridge.queue.ReactQueueConfigurationSpec;
+import com.facebook.react.devsupport.WebsocketJavaScriptExecutor;
 import com.facebook.react.devsupport.interfaces.DevSupportManager;
 import com.facebook.soloader.SoLoader;
 
@@ -58,6 +59,7 @@ public class ReactContextBuilder {
     }
 
     public ReactApplicationContext build() throws Exception {
+//        JavaScriptExecutor jsExecutor = new WebsocketJavaScriptExecutor();
         JavaScriptExecutor jsExecutor = new JSCJavaScriptExecutor.Factory(new WritableNativeMap()).create();
 
         // fresh new react context
