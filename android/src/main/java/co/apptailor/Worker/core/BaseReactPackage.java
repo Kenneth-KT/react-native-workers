@@ -39,6 +39,8 @@ public class BaseReactPackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext catalystApplicationContext) {
         return Arrays.<NativeModule>asList(
+                new AppStateModule(catalystApplicationContext),
+
                 // Core list
                 new AndroidInfoModule(),
                 new ExceptionsManagerModule(reactInstanceManager.getDevSupportManager()),
