@@ -1,7 +1,9 @@
 package co.apptailor.Worker.core;
 
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.PackageManager;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.Context;
 import android.util.Log;
 
@@ -57,20 +59,22 @@ public class ReactContextBuilder {
     }
  
     public ReactContextBuilder setApplicationInfo(ApplicationInfo applicationInfo) {
+        this.applicationInfo = applicationInfo;}
+        return this;
+    } 
+    public ReactApplicationContext build() throws Exception {
+        JavaScriptExecutor jsExecutor = new JSCJavaScriptExecutor.Factory(new WritableNativeMap()).create();
+        ApplicationInfo ai;
+        // fresh new react context
+        final ReactApplicationContext reactContext = new ReactApplicationContext(parentContext);
+        Log.d("RCB", "line 79");
         try {
-            this.applicationInfo = this.parentContext.getPackageManager().getApplicationInfo(this.parentContext.getPackageName(), 0);
-            return this;
+            PackageManager pm = this.reactContext.getPackageManager();
+            ai = pm.getApplicationInfo(context.getPackageName(), 0);
         } catch (NameNotFoundException e) {
             e.printStackTrace();
         }
-        return this;
- } 
-    public ReactApplicationContext build() throws Exception {
-        JavaScriptExecutor jsExecutor = new JSCJavaScriptExecutor.Factory(new WritableNativeMap()).create();
-
-        // fresh new react context
-        final ReactApplicationContext reactContext = new ReactApplicationContext(parentContext);
-        Log.d("RCB", "line 60");
+  
         if (devSupportManager != null) {
             reactContext.setNativeModuleCallExceptionHandler(devSupportManager);
         }
@@ -94,7 +98,7 @@ public class ReactContextBuilder {
                         ? devSupportManager
                         : createNativeModuleExceptionHandler()
                 )
-                .setApplicationInfo(applicationInfo);
+                .setApplicationInfo(ai);
 
         Log.d("RCB", "line 86");
         final CatalystInstance catalystInstance;
@@ -104,9 +108,6 @@ public class ReactContextBuilder {
         }
         if (jsExecutor != null) {
             Log.d("RCB", "jsExecutor not null");
-        }
-        if (applicationInfo != null) {
-            Log.d("RCB", "appInfo not null");
         }
         catalystInstance = catalystInstanceBuilder.build();
         Log.d("RCB", "line 90");
