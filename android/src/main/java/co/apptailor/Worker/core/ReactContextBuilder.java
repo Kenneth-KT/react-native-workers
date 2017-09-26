@@ -59,18 +59,18 @@ public class ReactContextBuilder {
     }
  
     public ReactContextBuilder setApplicationInfo(ApplicationInfo applicationInfo) {
-        this.applicationInfo = applicationInfo;}
+        this.applicationInfo = applicationInfo;
         return this;
     } 
     public ReactApplicationContext build() throws Exception {
         JavaScriptExecutor jsExecutor = new JSCJavaScriptExecutor.Factory(new WritableNativeMap()).create();
-        ApplicationInfo ai;
+        ApplicationInfo ai = null;
         // fresh new react context
         final ReactApplicationContext reactContext = new ReactApplicationContext(parentContext);
         Log.d("RCB", "line 79");
         try {
-            PackageManager pm = this.reactContext.getPackageManager();
-            ai = pm.getApplicationInfo(context.getPackageName(), 0);
+            PackageManager pm = reactContext.getPackageManager();
+            ai = pm.getApplicationInfo(reactContext.getPackageName(), 0);
         } catch (NameNotFoundException e) {
             e.printStackTrace();
         }
