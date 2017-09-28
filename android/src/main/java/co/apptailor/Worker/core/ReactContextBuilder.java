@@ -1,6 +1,10 @@
 package co.apptailor.Worker.core;
 
 import android.content.Context;
+import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.pm.PackageManager;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 
 import com.facebook.react.NativeModuleRegistryBuilder;
 import com.facebook.react.ReactPackage;
@@ -32,11 +36,17 @@ public class ReactContextBuilder {
     private DevSupportManager devSupportManager;
     private ReactInstanceManager instanceManager;
     private ArrayList<ReactPackage> reactPackages;
+    private ApplicationInfo applicationInfo;
 
     public ReactContextBuilder(Context context) {
         this.parentContext = context;
         SoLoader.init(context, /* native exopackage */ false);
     }
+   
+    public ReactContextBuilder setApplicationInfo(ApplicationInfo applicationInfo) {
+    this.applicationInfo = applicationInfo; 
+    return this;
+   }
 
     public ReactContextBuilder setJSBundleLoader(JSBundleLoader jsBundleLoader) {
         this.jsBundleLoader = jsBundleLoader;
@@ -62,10 +72,19 @@ public class ReactContextBuilder {
 //        JavaScriptExecutor jsExecutor = new WebsocketJavaScriptExecutor();
         JavaScriptExecutor jsExecutor = new JSCJavaScriptExecutor.Factory(new WritableNativeMap()).create();
 
+        ApplicationInfo ai = null;
+
         // fresh new react context
         final ReactApplicationContext reactContext = new ReactApplicationContext(parentContext);
         if (devSupportManager != null) {
             reactContext.setNativeModuleCallExceptionHandler(devSupportManager);
+        }
+       
+        try {
+            PackageManager pm = reactContext.getPackageManager();
+            ai = pm.getApplicationInfo(reactContext.getPackageName(), 0);
+        } catch (NameNotFoundException e) {
+            e.printStackTrace();
         }
 
         // load native modules
@@ -85,8 +104,8 @@ public class ReactContextBuilder {
                 .setNativeModuleCallExceptionHandler(devSupportManager != null
                         ? devSupportManager
                         : createNativeModuleExceptionHandler()
-                );
-
+                )
+                .setApplicationInfo(ai);
 
         final CatalystInstance catalystInstance;
         catalystInstance = catalystInstanceBuilder.build();
