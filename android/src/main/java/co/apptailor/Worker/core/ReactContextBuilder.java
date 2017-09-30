@@ -5,15 +5,12 @@ import android.content.Context;
 import com.facebook.react.NativeModuleRegistryBuilder;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.CatalystInstance;
-import com.facebook.react.cxxbridge.CatalystInstanceImpl;
-import com.facebook.react.cxxbridge.JSBundleLoader;
-import com.facebook.react.cxxbridge.JSCJavaScriptExecutor;
-import com.facebook.react.cxxbridge.JavaScriptExecutor;
-import com.facebook.react.bridge.JavaScriptModule;
-import com.facebook.react.bridge.JavaScriptModuleRegistry;
+import com.facebook.react.bridge.CatalystInstanceImpl;
+import com.facebook.react.bridge.JSBundleLoader;
+import com.facebook.react.bridge.JSCJavaScriptExecutor;
+import com.facebook.react.bridge.JavaScriptExecutor;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.NativeModuleCallExceptionHandler;
-import com.facebook.react.cxxbridge.NativeModuleRegistry;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.WritableNativeMap;
@@ -70,15 +67,10 @@ public class ReactContextBuilder {
         NativeModuleRegistryBuilder nativeRegistryBuilder = new NativeModuleRegistryBuilder(reactContext, this.instanceManager, false);
         addNativeModules(reactContext, nativeRegistryBuilder);
 
-        // load js modules
-        JavaScriptModuleRegistry.Builder jsModulesBuilder = new JavaScriptModuleRegistry.Builder();
-        addJSModules(jsModulesBuilder);
-
         CatalystInstanceImpl.Builder catalystInstanceBuilder = new CatalystInstanceImpl.Builder()
                 .setReactQueueConfigurationSpec(ReactQueueConfigurationSpec.createDefault())
                 .setJSExecutor(jsExecutor)
                 .setRegistry(nativeRegistryBuilder.build())
-                .setJSModuleRegistry(jsModulesBuilder.build())
                 .setJSBundleLoader(jsBundleLoader)
                 .setNativeModuleCallExceptionHandler(devSupportManager != null
                         ? devSupportManager
@@ -131,15 +123,6 @@ public class ReactContextBuilder {
                 throw new RuntimeException(e);
             }
         };
-    }
-
-    private void addJSModules(JavaScriptModuleRegistry.Builder jsModulesBuilder) {
-        for (int i = 0; i < reactPackages.size(); i++) {
-            ReactPackage reactPackage = reactPackages.get(i);
-            for (Class<? extends JavaScriptModule> jsModuleClass : reactPackage.createJSModules()) {
-                jsModulesBuilder.add(jsModuleClass);
-            }
-        }
     }
 
     private void addNativeModules(ReactApplicationContext reactContext, NativeModuleRegistryBuilder nativeRegistryBuilder) {
